@@ -8,6 +8,8 @@ import com.distribsystems.p2p.chord_lib.Chord;
 import com.distribsystems.p2p.chord_lib.Node;
 
 import java.math.BigInteger;
+import java.net.*;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -17,8 +19,30 @@ public class Client
 {
     public static void main(String[] args){
         Node node;
-        String ip = "127.0.0.1";
+       // String ip = "127.0.0.1";
+        String ip = null;
+        try {
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
+            while(e.hasMoreElements())
+            {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements())
+                {
+                    InetAddress i = (InetAddress) ee.nextElement();
+                    //System.out.println(i.getHostAddress());
+                    if(i.getHostAddress().startsWith("192")){
+                        ip = i.getHostAddress();
+                    }
+                }
+            }
+            //ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
         int port = 8000;
+
+
 
         /**
          * Program Arguments
