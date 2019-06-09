@@ -1,4 +1,4 @@
-package com.distribsystems.p2p;
+package com.distribsystems.p2p.chord_lib;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

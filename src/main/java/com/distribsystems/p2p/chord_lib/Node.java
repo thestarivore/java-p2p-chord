@@ -1,4 +1,4 @@
-package com.distribsystems.p2p;
+package com.distribsystems.p2p.chord_lib;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -10,10 +10,7 @@ import java.math.BigInteger;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Handler;
 
 /**
  * Node
@@ -55,9 +52,9 @@ public class Node
             setNodeId(ipAddress, portNumber);
 
             // Initialize finger table and successors
-            System.out.println("Creating a new ChordRing");
-            System.out.println("Server listening on port " + this.port);
-            System.out.println("Node's position is " + this.id);
+            Chord.cLogPrint("Creating a new ChordRing");
+            Chord.cLogPrint("Server listening on port " + this.port);
+            Chord.cLogPrint("Node's position is " + this.id);
             initFingerTable();
             initSuccessors();
 
@@ -93,10 +90,10 @@ public class Node
             setNodeId(ipAddress, portNumber);
 
             // Initialize finger table and successors
-            System.out.println("Joining an existing ChordRing");
-            System.out.println("Server listening on port " + this.port);
-            System.out.println("Connected to the existing node " + this.existingNodeIpAddr + ":" + this.existingNodePort);
-            System.out.println("Node's position is " + this.id);
+            Chord.cLogPrint("Joining an existing ChordRing");
+            Chord.cLogPrint("Server listening on port " + this.port);
+            Chord.cLogPrint("Connected to the existing node " + this.existingNodeIpAddr + ":" + this.existingNodePort);
+            Chord.cLogPrint("Node's position is " + this.id);
             initFingerTable();
             initSuccessors();
 
@@ -121,7 +118,7 @@ public class Node
         BigInteger baseTwo = BigInteger.valueOf(2L);
         this.id = new BigInteger(hex, 16);
         this.id = this.id.mod(baseTwo.pow(Chord.FINGER_TABLE_SIZE));
-        System.out.println(this.id);
+        Chord.cLogPrint(this.id.toString());
     }
 
     /**
@@ -159,7 +156,7 @@ public class Node
 
                     // Send query to chord
                     socketWriter.println(Chord.FIND_FINGER + ":" + fingerNode.toString());
-                    System.out.println("Sending: " + Chord.FIND_FINGER + ":" + fingerNode.toString());
+                    Chord.cLogPrint("Sending: " + Chord.FIND_FINGER + ":" + fingerNode.toString());
 
                     // Read response from chord
                     String serverResponse = socketReader.readLine();
@@ -171,7 +168,7 @@ public class Node
                     // Add response finger to table
                     this.fingerTable.put(i, new Finger(addressFragments[0], Integer.valueOf(addressFragments[1])));
 
-                    System.out.println("Received: " + serverResponse);
+                    Chord.cLogPrint("Received: " + serverResponse);
                 }
 
                 // Close connections
@@ -204,7 +201,7 @@ public class Node
 
                 // Tell successor that this node is its new predecessor
                 socketWriter.println(Chord.NEW_PREDECESSOR + ":" + this.getIpAddr() + ":" + this.getPort());
-                System.out.println("Sending: " + Chord.NEW_PREDECESSOR + ":" + this.getIpAddr() + ":" + this.getPort() + " to " + this.firstSuccessor.getIpAddr() + ":" + this.firstSuccessor.getPort());
+                Chord.cLogPrint("Sending: " + Chord.NEW_PREDECESSOR + ":" + this.getIpAddr() + ":" + this.getPort() + " to " + this.firstSuccessor.getIpAddr() + ":" + this.firstSuccessor.getPort());
 
                 // Close connections
                 socketWriter.close();
@@ -219,17 +216,17 @@ public class Node
      * @brief   Print the Status Logs, witch includes the whole FingerTable plus the two successors and the two predecessors
      */
     public void printStatusLogs(){
-        System.out.println("---------------------------------------");
+        Chord.cLogPrint("---------------------------------------");
         // Print Predecessors and Successors
-        System.out.println("FirstPredecessor--->" + getFirstPredecessor().getIpAddr() + ":" + getFirstPredecessor().getPort() +
+        Chord.cLogPrint("FirstPredecessor--->" + getFirstPredecessor().getIpAddr() + ":" + getFirstPredecessor().getPort() +
                 " (id_= " + getFirstPredecessor().getId().toString() + ")");
-        System.out.println("SecondPredecessor-->" + getSecondPredecessor().getIpAddr() + ":" + getSecondPredecessor().getPort() +
+        Chord.cLogPrint("SecondPredecessor-->" + getSecondPredecessor().getIpAddr() + ":" + getSecondPredecessor().getPort() +
                 " (id_= " + getSecondPredecessor().getId().toString() + ")");
-        System.out.println("FirstSuccessor----->" + getFirstSuccessor().getIpAddr() + ":" + getFirstSuccessor().getPort() +
+        Chord.cLogPrint("FirstSuccessor----->" + getFirstSuccessor().getIpAddr() + ":" + getFirstSuccessor().getPort() +
                 " (id_= " + getFirstSuccessor().getId().toString() + ")");
-        System.out.println("SecondSuccessor---->" + getSecondSuccessor().getIpAddr() + ":" + getSecondSuccessor().getPort() +
+        Chord.cLogPrint("SecondSuccessor---->" + getSecondSuccessor().getIpAddr() + ":" + getSecondSuccessor().getPort() +
                 " (id_= " + getSecondSuccessor().getId().toString() + ")");
-        System.out.println("---------------------------------------");
+        Chord.cLogPrint("---------------------------------------");
         // Iterate all the Fingers in the FingerTable and print them
         BigInteger baseTwo = BigInteger.valueOf(2L);
         for (int i = 0; i < Chord.FINGER_TABLE_SIZE; i++) {
@@ -243,13 +240,13 @@ public class Node
 
 
             Finger finger = fingerTable.get(i);
-            System.out.println("Finger " + String.valueOf(i) + "(" + fingerNode + "): " + finger.getIpAddr() + ":" + finger.getPort() + "-->" + finger.getId());
+            Chord.cLogPrint("Finger " + String.valueOf(i) + "(" + fingerNode + "): " + finger.getIpAddr() + ":" + finger.getPort() + "-->" + finger.getId());
         }
-        System.out.println("---------------------------------------");
+        Chord.cLogPrint("---------------------------------------");
         for(BigInteger key: itemTable.keySet()){
-            System.out.println("Item: " + key.toString() + " --> '" + itemTable.get(key) + "'");
+            Chord.cLogPrint("Item: " + key.toString() + " --> '" + itemTable.get(key) + "'");
         }
-        System.out.println("---------------------------------------");
+        Chord.cLogPrint("---------------------------------------");
     }
 
     /**
@@ -305,12 +302,12 @@ public class Node
 
             // Send query to chord
             socketWriter.println(Chord.FIND_ITEM + ":" + key.toString());
-            System.out.println("Sent: " + Chord.FIND_ITEM + ":" + key.toString());
+            Chord.cLogPrint("Sent: " + Chord.FIND_ITEM + ":" + key.toString());
 
             // Read response from chord
             String serverResponse = socketReader.readLine();
-            System.out.println("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
-            System.out.println("\n"+serverResponse.toString()+"\n");
+            Chord.cLogPrint("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
+            Chord.cLogPrint("\n"+serverResponse.toString()+"\n");
             response = serverResponse;
 
             // Close connections
@@ -324,6 +321,16 @@ public class Node
         }
 
         return response;
+    }
+
+    /**
+     * @brief   Place an Item with with the specified key in the ChordRing Network
+     * @param   item    Item to place on the ChordRing
+     * @return  String of the response (containing the node that is storing the item)
+     */
+    public String placeItem(String item){
+        BigInteger itemKey = getKeyOfItem(item);
+        return placeItem(itemKey, item);
     }
 
     /**
@@ -380,11 +387,11 @@ public class Node
 
             // Send query to chord
             socketWriter.println(Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  item);
-            System.out.println("Sent: " + Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  item);
+            Chord.cLogPrint("Sent: " + Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  item);
 
             // Read response from chord
             String serverResponse = socketReader.readLine();
-            System.out.println("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
+            Chord.cLogPrint("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
             response = serverResponse;
 
             // Close connections
@@ -400,6 +407,17 @@ public class Node
         return response;
     }
 
+    /**
+     * @brief   Create the Identifier(key) by taking the SHA-1 hash function of the item passed as argument
+     * @param   item     String of the Item
+     */
+    public BigInteger getKeyOfItem(String item){
+        String hex = DigestUtils.sha1Hex(item);
+        BigInteger baseTwo = BigInteger.valueOf(2L);
+        BigInteger key = new BigInteger(hex, 16);
+        key = key.mod(baseTwo.pow(Chord.FINGER_TABLE_SIZE));
+        return key;
+    }
 
     public Map<Integer, Finger> getFingerTable() {
         return fingerTable;

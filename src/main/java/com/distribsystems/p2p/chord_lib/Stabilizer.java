@@ -1,4 +1,4 @@
-package com.distribsystems.p2p;
+package com.distribsystems.p2p.chord_lib;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,11 +70,11 @@ public class Stabilizer extends Thread {
                         // n (this node), asks it's successor for the successor's predecessor p, and decides
                         // whether p should be n's successor instead (for example if p has recently joined)
                         socketWriter.println(Chord.REQUEST_PREDECESSOR + ":" + this.node.getId() + " asking " + this.node.getFirstSuccessor().getId());
-                        System.out.println("Sent: " + Chord.REQUEST_PREDECESSOR + ":" + this.node.getId() + " asking " + this.node.getFirstSuccessor().getId());
+                        Chord.cLogPrint("Sent: " + Chord.REQUEST_PREDECESSOR + ":" + this.node.getId() + " asking " + this.node.getFirstSuccessor().getId());
 
                         // Read response from chord
                         String serverResponse = socketReader.readLine();
-                        System.out.println("Received: " + serverResponse);
+                        Chord.cLogPrint("Received: " + serverResponse);
 
                         // Parse server response for address and port
                         String[] predecessorFragments = serverResponse.split(":");
@@ -114,7 +114,7 @@ public class Stabilizer extends Thread {
 
                                 // Tell successor that this node is its new predecessor
                                 socketWriter.println(Chord.NEW_PREDECESSOR + ":" + this.node.getIpAddr() + ":" + this.node.getPort());
-                                System.out.println("Sent: " + Chord.NEW_PREDECESSOR + ":" + this.node.getIpAddr() + ":" + this.node.getPort());
+                                Chord.cLogPrint("Sent: " + Chord.NEW_PREDECESSOR + ":" + this.node.getIpAddr() + ":" + this.node.getPort());
                             }
                         } catch (Exception e){
                             e.printStackTrace();
@@ -149,7 +149,7 @@ public class Stabilizer extends Thread {
 
                             // Send query to chord
                             socketWriter.println(Chord.FIND_FINGER + ":" + bigResult.longValue());
-                            System.out.println("Sent: " + Chord.FIND_FINGER + ":" + bigResult.longValue());
+                            Chord.cLogPrint("Sent: " + Chord.FIND_FINGER + ":" + bigResult.longValue());
 
                             // Read response from chord
                             serverResponse = socketReader.readLine();
@@ -164,7 +164,7 @@ public class Stabilizer extends Thread {
                                 this.node.setFirstSuccessor(this.node.getFingerTable().get(0));
                                 this.node.setSecondSuccessor(this.node.getFingerTable().get(1));
 
-                                System.out.println("Received: " + serverResponse);
+                                Chord.cLogPrint("Received: " + serverResponse);
                             }
                         }
 
@@ -201,7 +201,7 @@ public class Stabilizer extends Thread {
 
                             // Send query to chord
                             socketWriter.println(Chord.FIND_FINGER + ":" + bigResult.longValue());
-                            System.out.println("Sent: " + Chord.FIND_FINGER + ":" + bigResult.longValue());
+                            Chord.cLogPrint("Sent: " + Chord.FIND_FINGER + ":" + bigResult.longValue());
 
                             // Read response from chord
                             String serverResponse = socketReader.readLine();
@@ -215,7 +215,7 @@ public class Stabilizer extends Thread {
                             this.node.setFirstSuccessor(this.node.getFingerTable().get(0));
                             this.node.setSecondSuccessor(this.node.getFingerTable().get(1));
 
-                            System.out.println("Received: " + serverResponse);
+                            Chord.cLogPrint("Received: " + serverResponse);
                         }
 
                         this.node.release();
@@ -338,11 +338,11 @@ public class Stabilizer extends Thread {
 
             // Send query to chord
             socketWriter.println(Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  node.getItemTable().get(itemKey));
-            System.out.println("Sent: " + Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  node.getItemTable().get(itemKey));
+            Chord.cLogPrint("Sent: " + Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  node.getItemTable().get(itemKey));
 
             // Read response from chord
             String serverResponse = socketReader.readLine();
-            System.out.println("Response from node " + finger.getIpAddr() + ", port " + finger.getPort() + ", position " + " (" + finger.getId() + "):");
+            Chord.cLogPrint("Response from node " + finger.getIpAddr() + ", port " + finger.getPort() + ", position " + " (" + finger.getId() + "):");
 
             //Correct Response --> remove the item from this node
             if(serverResponse != null){
@@ -381,11 +381,11 @@ public class Stabilizer extends Thread {
 
                 // Send a ping
                 socketWriter.println(Chord.PING + ":" + this.node.getId());
-                System.out.println("Sent: " + Chord.PING + ":" + this.node.getId());
+                Chord.cLogPrint("Sent: " + Chord.PING + ":" + this.node.getId());
 
                 // Read response
                 String serverResponse = socketReader.readLine();
-                System.out.println("Received: " + serverResponse);
+                Chord.cLogPrint("Received: " + serverResponse);
 
                 // If we do not receive the proper response then something has gone wrong and we need to set our new immediate successor to the backup
                 if (!serverResponse.equals(Chord.PONG)) {
@@ -418,11 +418,11 @@ public class Stabilizer extends Thread {
 
                 // Send a ping
                 socketWriter.println(Chord.PING + ":" + this.node.getId());
-                System.out.println("Sent: " + Chord.PING + ":" + this.node.getId());
+                Chord.cLogPrint("Sent: " + Chord.PING + ":" + this.node.getId());
 
                 // Read response
                 String serverResponse = socketReader.readLine();
-                System.out.println("Received: " + serverResponse);
+                Chord.cLogPrint("Received: " + serverResponse);
 
                 // If we do not receive the proper response then something has gone wrong and we need to set our new immediate predecessor to the backup
                 if (!serverResponse.equals(Chord.PONG)) {
@@ -449,9 +449,9 @@ public class Stabilizer extends Thread {
      *  @brief Find at least one New Valid Successor in the FingerTable
      */
     private void findNewValidSuccessor(){
-        System.out.println("#############################################################################");
-        System.out.println("THE SUCCESSOR STOPPED RESPONDING. INITIATING RESEARCH OF NEW VALID SUCCESSOR!");
-        System.out.println("#############################################################################");
+        Chord.cLogPrint("#############################################################################");
+        Chord.cLogPrint("THE SUCCESSOR STOPPED RESPONDING. INITIATING RESEARCH OF NEW VALID SUCCESSOR!");
+        Chord.cLogPrint("#############################################################################");
 
         this.node.acquire();
 
@@ -464,13 +464,13 @@ public class Stabilizer extends Thread {
         boolean firstSuccesorFound = false;
         boolean secondSuccesorFound = false;
         for (int i = 0; i < Chord.FINGER_TABLE_SIZE; i++) {
-            System.out.println("## Finger Iteration" + String.valueOf(i) + " ##");
+            Chord.cLogPrint("## Finger Iteration" + String.valueOf(i) + " ##");
             try {
                 nextFinger = node.getFingerTable().get(i);
 
                 // Open socket to successor
                 Socket socket = new Socket(nextFinger.getIpAddr(), nextFinger.getPort());
-                System.out.println("Try to connect to: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort());
+                Chord.cLogPrint("Try to connect to: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort());
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -478,24 +478,24 @@ public class Stabilizer extends Thread {
 
                 // Send a ping
                 socketWriter.println(Chord.PING + ":" + this.node.getId());
-                System.out.println("Sent: " + Chord.PING + ":" + this.node.getId());
+                Chord.cLogPrint("Sent: " + Chord.PING + ":" + this.node.getId());
 
                 // Read response
                 String serverResponse = socketReader.readLine();
-                System.out.println("Received: " + serverResponse);
+                Chord.cLogPrint("Received: " + serverResponse);
 
                 // If we received a PONG in response of the PING
                 // We have may have found a new valid successor
                 if (serverResponse.equals(Chord.PONG) && (!this.node.getIpAddr().equals(nextFinger.getId()) || this.node.getPort() != nextFinger.getPort())) {
                     if(!firstSuccesorFound) {
-                        System.out.println("FOUND VALID FIRST SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
+                        Chord.cLogPrint("FOUND VALID FIRST SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
                         this.node.setFirstSuccessor(nextFinger);
                         firstSuccesorFound = true;
                         continue;
                     }else {
                         if(!nextFinger.getIpAddr().equals(this.node.getFirstSuccessor().getIpAddr()) ||
                                 nextFinger.getPort() != this.node.getFirstSuccessor().getPort()) {
-                            System.out.println("FOUND VALID SECOND SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
+                            Chord.cLogPrint("FOUND VALID SECOND SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
                             //this.node.setFirstSuccessor(nextFinger);
                             this.node.setSecondSuccessor(nextFinger);
                             secondSuccesorFound = true;
@@ -517,7 +517,7 @@ public class Stabilizer extends Thread {
             //First Predecessor
             nextFinger = this.node.getFirstPredecessor();
             if (!nextFinger.getIpAddr().equals(this.node.getFirstSuccessor().getIpAddr()) || nextFinger.getPort() != this.node.getFirstSuccessor().getPort()) {
-                System.out.println("FOUND VALID FIRST SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
+                Chord.cLogPrint("FOUND VALID FIRST SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
                 this.node.setFirstSuccessor(nextFinger);
                 firstSuccesorFound = true;
             }
@@ -525,7 +525,7 @@ public class Stabilizer extends Thread {
             else{
                 nextFinger = this.node.getSecondPredecessor();
                 if (!nextFinger.getIpAddr().equals(this.node.getFirstSuccessor().getIpAddr()) || nextFinger.getPort() != this.node.getFirstSuccessor().getPort()) {
-                    System.out.println("FOUND VALID FIRST SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
+                    Chord.cLogPrint("FOUND VALID FIRST SUCCESSOR: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort() + "(" + nextFinger.getId() + ")");
                     this.node.setFirstSuccessor(nextFinger);
                     firstSuccesorFound = true;
                 }

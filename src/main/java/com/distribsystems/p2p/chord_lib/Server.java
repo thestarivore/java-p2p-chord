@@ -1,4 +1,4 @@
-package com.distribsystems.p2p;
+package com.distribsystems.p2p.chord_lib;
 
 // Java implementation of Server side
 // It contains two classes : Server and ClientHandler
@@ -33,7 +33,7 @@ public class Server extends Thread
             try {
                 ss = new ServerSocket(port);
             } catch (Exception e) {
-                System.out.println("Address already used (" + port + ") \n");
+                Chord.cLogPrint("Address already used (" + port + ") \n");
                 port++;
             }
         }while (ss == null);
@@ -58,13 +58,13 @@ public class Server extends Thread
                 // socket object to receive incoming client requests
                 s = ss.accept();
 
-                System.out.println("A new client is connected : " + s);
+                Chord.cLogPrint("A new client is connected : " + s);
 
                 // obtaining input and out streams
                 DataInputStream dis = new DataInputStream(s.getInputStream());
                 DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-                System.out.println("Assigning new thread for this client");
+                Chord.cLogPrint("Assigning new thread for this client");
 
                 // create a new thread object
                 Thread t = new ClientHandler(s, dis, dos, node);
@@ -131,12 +131,12 @@ class ClientHandler extends Thread
                 String[] queryElements = query.split(":", 2);
                 String command = queryElements[0];
                 String content = queryElements[1];
-                System.out.println("Received: " + command + " " + content);
+                Chord.cLogPrint("Received: " + command + " " + content);
 
                 switch (command) {
                     case Chord.FIND_FINGER: {
                         String response = this.findFinger(content);
-                        System.out.println("Sent: " + response);
+                        Chord.cLogPrint("Sent: " + response);
 
                         // Respond back to the client
                         socketWriter.println(response);
@@ -169,7 +169,7 @@ class ClientHandler extends Thread
                     case Chord.REQUEST_PREDECESSOR: {
                         // Return the first predecessor address:port
                         String response = this.node.getFirstPredecessor().getIpAddr() + ":" + this.node.getFirstPredecessor().getPort();
-                        System.out.println("Sent: " + response);
+                        Chord.cLogPrint("Sent: " + response);
 
                         // Send response back to client
                         socketWriter.println(response);
@@ -180,7 +180,7 @@ class ClientHandler extends Thread
                     case Chord.PING: {
                         // Reply to the ping
                         String response = Chord.PONG;
-                        System.out.println("Sent: " + response);
+                        Chord.cLogPrint("Sent: " + response);
 
                         // Send response back to client
                         socketWriter.println(response);
@@ -190,7 +190,7 @@ class ClientHandler extends Thread
 
                     case Chord.FIND_ITEM: {
                         String response = this.findItemByKey(content);
-                        System.out.println("Sent: " + response);
+                        Chord.cLogPrint("Sent: " + response);
 
                         // Send response back to client
                         socketWriter.println(response);
@@ -205,7 +205,7 @@ class ClientHandler extends Thread
                         String item = contentFragments[1];
 
                         String response = this.placeItem(key, item);
-                        System.out.println("Sent: " + response);
+                        Chord.cLogPrint("Sent: " + response);
 
                         // Send response back to client
                         socketWriter.println(response);
@@ -278,7 +278,7 @@ class ClientHandler extends Thread
                 }
             }
 
-            System.out.println("queryid: " + queryId + "distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
+            Chord.cLogPrint("queryid: " + queryId + "distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
 
             try {
                 // Open socket to chord node
@@ -290,11 +290,11 @@ class ClientHandler extends Thread
 
                 // Send query to chord
                 socketWriter.println(Chord.FIND_FINGER + ":" + queryId);
-                System.out.println("Sent: " + Chord.FIND_FINGER + ":" + queryId);
+                Chord.cLogPrint("Sent: " + Chord.FIND_FINGER + ":" + queryId);
 
                 // Read response from chord
                 String serverResponse = socketReader.readLine();
-                System.out.println("Response from node " + closestPredecessor.getIpAddr() + ", port " + closestPredecessor.getPort() + ", position " + " (" + closestPredecessor.getId() + "):");
+                Chord.cLogPrint("Response from node " + closestPredecessor.getIpAddr() + ", port " + closestPredecessor.getPort() + ", position " + " (" + closestPredecessor.getId() + "):");
 
                 response = serverResponse;
 
@@ -346,11 +346,11 @@ class ClientHandler extends Thread
 
                 // Send query to chord
                 socketWriter.println(Chord.FIND_ITEM + ":" + key);
-                System.out.println("Sent: " + Chord.FIND_ITEM + ":" + key);
+                Chord.cLogPrint("Sent: " + Chord.FIND_ITEM + ":" + key);
 
                 // Read response from chord
                 String serverResponse = socketReader.readLine();
-                System.out.println("Response from node " + this.node.getFirstSuccessor().getIpAddr() + ", port " + this.node.getFirstSuccessor().getPort() + ", position " + " (" + this.node.getFirstSuccessor().getId() + "):");
+                Chord.cLogPrint("Response from node " + this.node.getFirstSuccessor().getIpAddr() + ", port " + this.node.getFirstSuccessor().getPort() + ", position " + " (" + this.node.getFirstSuccessor().getId() + "):");
 
                 response = serverResponse;
 
@@ -389,7 +389,7 @@ class ClientHandler extends Thread
                 }
             }
 
-            System.out.println("queryid: " + queryId + " minimum distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
+            Chord.cLogPrint("queryid: " + queryId + " minimum distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
 
             try {
                 // Open socket to chord node
@@ -401,11 +401,11 @@ class ClientHandler extends Thread
 
                 // Send query to chord
                 socketWriter.println(Chord.FIND_ITEM + ":" + key);
-                System.out.println("Sent: " + Chord.FIND_ITEM + ":" + key);
+                Chord.cLogPrint("Sent: " + Chord.FIND_ITEM + ":" + key);
 
                 // Read response from chord
                 String serverResponse = socketReader.readLine();
-                System.out.println("Response from node " + closestPredecessor.getIpAddr() + ", port " + closestPredecessor.getPort() + ", position " + " (" + closestPredecessor.getId() + "):");
+                Chord.cLogPrint("Response from node " + closestPredecessor.getIpAddr() + ", port " + closestPredecessor.getPort() + ", position " + " (" + closestPredecessor.getId() + "):");
 
                 response = serverResponse;
 
@@ -443,7 +443,7 @@ class ClientHandler extends Thread
             // Add the Item on the ItemTable and send back the feedback
             this.node.getItemTable().put(new BigInteger(key), item);
             response = Chord.ITEM_PLACED + ":" + node.getId().toString();
-            System.out.println("PlacedItem: key=" + key + ", item=" + item);
+            Chord.cLogPrint("PlacedItem: key=" + key + ", item=" + item);
         } else { // We don't have the query so we must search our fingers for it
             BigInteger baseTwo = BigInteger.valueOf(2L);
             BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
@@ -510,7 +510,7 @@ class ClientHandler extends Thread
                     closestSuccessor = smallestFinger;
             }
 
-            //System.out.println("queryid: " + itemKey + " minimum distance: " + minimumDistance + " on " + closestSuccessor.getIpAddr() + ":" + closestSuccessor.getPort());
+            //Chord.cLogPrint("queryid: " + itemKey + " minimum distance: " + minimumDistance + " on " + closestSuccessor.getIpAddr() + ":" + closestSuccessor.getPort());
 
             try {
                 // Open socket to chord node
@@ -522,11 +522,11 @@ class ClientHandler extends Thread
 
                 // Send query to chord
                 socketWriter.println(Chord.PLACE_ITEM + ":" + key.toString() + ":" + item);
-                System.out.println("Sent: " + Chord.PLACE_ITEM + ":" + key.toString() + ":" + item);
+                Chord.cLogPrint("Sent: " + Chord.PLACE_ITEM + ":" + key.toString() + ":" + item);
 
                 // Read response from chord
                 String serverResponse = socketReader.readLine();
-                System.out.println("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
+                Chord.cLogPrint("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
 
                 response = serverResponse;
 

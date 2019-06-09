@@ -1,4 +1,4 @@
-package com.distribsystems.p2p;
+package com.distribsystems.p2p.chord_lib;
 
 import java.util.Scanner;
 
@@ -7,6 +7,7 @@ public class Chord {
     public final static int         FINGER_TABLE_SIZE = 8;          //Max 160
     public final static int         STABILIZATION_DELAY = 8;        //[seconds]
     public final static int         PING_DELAY = 3;                 //[seconds]
+    public static boolean           enableLogs = true;
 
     public final static String NEW_PREDECESSOR      = "NEW_PREDECESSOR";
     public final static String FIND_FINGER          = "FIND_FINGER";            //FIND_NODE
@@ -20,8 +21,24 @@ public class Chord {
     public static final String ITEM_PLACED          = "ITEM_PLACED";
     public static final String NOT_FOUND            = "NOT_FOUND";
 
+    /**
+     * @brief   Log printing function that can be inhibited
+     * @param   log String of the log to print
+     */
+    static public void cLogPrint(String log){
+        if(enableLogs)
+            System.out.println(log);
+    }
 
-    public static void main(String[] args){
+    public static boolean isEnableLogs() {
+        return enableLogs;
+    }
+
+    public static void setEnableLogs(boolean enableLogs) {
+        Chord.enableLogs = enableLogs;
+    }
+
+    /*public static void main(String[] args){
         String ip = "127.0.0.1";
         int port = 8000;
 
@@ -31,7 +48,7 @@ public class Chord {
          * args[1] = ip address of the Node to connect to
          * args[2] = port of the Node to connect to
          */
-        if(args.length > 0){
+       /* if(args.length > 0){
             port = Integer.parseInt(args[0]);
         }
 
@@ -76,5 +93,5 @@ public class Chord {
                 new Node(ip, port, existingIpAddress, existingPort);
             }
         }
-    }
+    }*/
 }

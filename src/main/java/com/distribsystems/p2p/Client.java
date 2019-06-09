@@ -4,63 +4,149 @@ package com.distribsystems.p2p;
 // Java implementation for a client
 // Save file as Client.java
 
-import java.io.*;
-import java.net.*;
+import com.distribsystems.p2p.chord_lib.Chord;
+import com.distribsystems.p2p.chord_lib.Node;
+
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 // Client class
-public class Client extends Thread
+public class Client
 {
-    public final static int STARTING_PORT = 5056;
-    private int serverPort;
+    public static void main(String[] args){
+        Node node;
+        String ip = "127.0.0.1";
+        int port = 8000;
 
-    public Client(int sPort){
-        serverPort = sPort;
+        /**
+         * Program Arguments
+         * args[0] = port of the newly created Node
+         * args[1] = ip address of the Node to connect to
+         * args[2] = port of the Node to connect to
+         * args[3] = create a node
+         */
+        if(args.length > 0){
+            port = Integer.parseInt(args[0]);
+        }
+
+        if (args.length == 1) {
+            // Create new node
+            node = new Node(ip, port);
+        } else if (args.length == 3) {
+            String existingIpAddress = args[1];
+            int existingPort = Integer.parseInt(args[2]);
+
+            // Create new node
+            node = new Node(ip, port, existingIpAddress, existingPort);
+        } else {
+            // User Input
+            Scanner myObj = new Scanner(System.in);
+
+            System.out.println("Create a Node within a new ChordRing? [y/n]\n");
+            String resp = myObj.nextLine();
+            //New Chord Ring
+            if(resp.equals("y")){
+                System.out.println("\n Insert Node's PortNumber: ");
+                port = myObj.nextInt();
+                myObj.nextLine();
+
+                // Create new node
+                node = new Node(ip, port);
+
+                //Choose Mode
+                Chord.setEnableLogs(false);
+                System.out.println("\nChoose between:");
+                System.out.println("[1] Run the Node with it's logs.");
+                System.out.println("[2] Run a Client, while running the Node in background.");
+                int mode = myObj.nextInt();
+                myObj.nextLine();
+                if (mode == 1) {
+                    Chord.setEnableLogs(true);
+                }else if (mode == 2) {
+                    Chord.setEnableLogs(false);
+                    runClientAutoma(node);
+                }
+            }
+            //Add Node to Existing ChordRing
+            else{
+                System.out.println("\n Insert Node's PortNumber: ");
+                port = myObj.nextInt();
+                myObj.nextLine();
+
+                System.out.println("\n Insert the IP Address of the already existing Node: ");
+                String existingIpAddress = myObj.nextLine();
+
+                System.out.println("\n Insert the PortNumber of the already existing Node: ");
+                int existingPort = myObj.nextInt();
+                myObj.nextLine();
+
+                // Create new node
+                node = new Node(ip, port, existingIpAddress, existingPort);
+
+                //Choose Mode
+                Chord.setEnableLogs(false);
+                System.out.println("\nChoose between:");
+                System.out.println("[1] Run the Node with it's logs.");
+                System.out.println("[2] Run a Client, while running the Node in background.");
+                int mode = myObj.nextInt();
+                myObj.nextLine();
+                if (mode == 1) {
+                    Chord.setEnableLogs(true);
+                }else if (mode == 2) {
+                    Chord.setEnableLogs(false);
+                    runClientAutoma(node);
+                }
+            }
+        }
     }
 
-    @Override
-    public void run() {
-        if(serverPort != STARTING_PORT) {
-            try {
-                Scanner scn = new Scanner(System.in);
+    /**
+     * @brief   Running the automa of the client
+     */
+    private static void runClientAutoma(Node node){
+        String query = "";
+        String resp = "";
+        System.out.println("------------CLIENT-----------\n");
+        Scanner myObj = new Scanner(System.in);
 
-                // getting localhost ip
-                InetAddress ip = InetAddress.getByName("localhost");
+        while (!query.equals("exit")){
+            System.out.println("---------------------------------------");
+            Map<BigInteger, String> items = new HashMap<>();
+            items.putAll(node.getItemTable());
+            if(!items.isEmpty()){
+                System.out.println("Items on this node:");
+            }
+            for(BigInteger key: items.keySet()){
+                System.out.println("Item: " + key.toString() + " --> '" + items.get(key) + "'");
+            }
+            System.out.println("---------------------------------------");
 
-                // establish the connection with server port 5056
-                Socket s = new Socket(ip, STARTING_PORT);
+            System.out.println("\nMenu:");
+            System.out.println("'put'   --> Put/Place an item on the ChordRing");
+            System.out.println("'get'   --> Get/Query an item by Key;");
+            System.out.println("'exit'  --> Exit and close node;");
+            query = myObj.nextLine();
 
-                // obtaining input and out streams
-                DataInputStream dis = new DataInputStream(s.getInputStream());
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-
-                // the following loop performs the exchange of
-                // information between client and client handler
-                while (true) {
-                    System.out.println(dis.readUTF());
-                    String tosend = scn.nextLine();
-                    dos.writeUTF(tosend);
-
-                    // If client sends exit,close this connection
-                    // and then break from the while loop
-                    if (tosend.equals("Exit")) {
-                        System.out.println("Closing this connection : " + s);
-                        s.close();
-                        System.out.println("Connection closed");
-                        break;
-                    }
-
-                    // printing date or time as requested by client
-                    String received = dis.readUTF();
-                    System.out.println(received);
-                }
-
-                // closing resources
-                scn.close();
-                dis.close();
-                dos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(query.equals("put")){
+                System.out.println("Insert Item(String) to place on the network:");
+                String item = myObj.nextLine();
+                node.acquire();
+                resp = node.placeItem(item);
+                System.out.println("Response: " + resp);
+                node.release();
+            }else if(query.equals("get")){
+                System.out.println("Insert Key of the Item to retrieve form the network:");
+                String key = myObj.nextLine();
+                node.acquire();
+                resp = node.findItem(new BigInteger(key));
+                System.out.println("Response: " + resp);
+                node.release();
+            }else if(query.equals("exit")){
+                System.exit(0);
+            }else{
+                System.out.println("\nWrong input, try again..:\n");
             }
         }
     }

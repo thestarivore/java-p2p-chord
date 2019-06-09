@@ -1,15 +1,11 @@
-package com.distribsystems.p2p;
+package com.distribsystems.p2p.chord_lib;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ItemGenerationTester extends Thread {
+    private final static boolean GENERATION_TESTER_ENABLE = false;
     private final static int ITEM_TESTER_PORT_NUMBER = 8004;
     private Map<BigInteger, String> tempItemTable = new HashMap<>();
     private int portNumber;
@@ -24,7 +20,7 @@ public class ItemGenerationTester extends Thread {
         this.node       = node;
 
         //Only the node with port number chosen does this thing
-        if(this.portNumber == ITEM_TESTER_PORT_NUMBER) {
+        if(this.portNumber == ITEM_TESTER_PORT_NUMBER && GENERATION_TESTER_ENABLE) {
             tempItemTable.put(new BigInteger("12"), "Item no. 12");
             tempItemTable.put(new BigInteger("54"), "Item no. 54");
             tempItemTable.put(new BigInteger("24"), "Item no. 24");
@@ -63,7 +59,7 @@ public class ItemGenerationTester extends Thread {
     @Override
     public void run() {
         //Only the node with port number chosen does this thing
-        if(this.portNumber == ITEM_TESTER_PORT_NUMBER) {
+        if(this.portNumber == ITEM_TESTER_PORT_NUMBER && GENERATION_TESTER_ENABLE) {
             String response = Chord.NOT_FOUND;
 
             //Wait 30seconds before starting
@@ -81,75 +77,9 @@ public class ItemGenerationTester extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                /*BigInteger baseTwo = BigInteger.valueOf(2L);
-                BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
-                BigInteger minimumDistance = ringSize;
-                Finger closestSuccessor = null;*/
 
                 node.acquire();
                 node.placeItem(key, tempItemTable.get(key));
-
-                // Look for a node identifier in the finger table that is less than the key we are looking for
-                // but is also the closest
-                /*for (Finger finger : node.getFingerTable().values()) {
-                    BigInteger distance;
-
-                    // Find clockwise distance from finger to key
-                    if (key.compareTo(finger.getId()) <= 0) {
-                        distance = finger.getId().subtract(key);
-                    } else {
-                        distance = ringSize;
-                    }
-
-                    // If the distance we have found is smaller than the current minimum, replace the current minimum
-                    if (distance.compareTo(minimumDistance) == -1) {
-                        minimumDistance = distance;
-                        closestSuccessor = finger;
-                    }
-                }
-
-                // If closest successor is null it means that there is no finger that has an ID greater than the key
-                // we are looking for, we should forward the request anyway to the finger with the larger id
-                if(closestSuccessor == null){
-                    BigInteger maxFingerId = new BigInteger("0");
-                    for (Finger finger : node.getFingerTable().values()) {
-                        if (maxFingerId.compareTo(finger.getId()) < 0){
-                            maxFingerId = finger.getId();
-                            closestSuccessor = finger;
-                        }
-                    }
-                }
-
-                //System.out.println("queryid: " + key + "distance: " + minimumDistance + " on " + closestSuccessor.getIpAddr() + ":" + closestSuccessor.getPort());
-
-                try {
-                    // Open socket to chord node
-                    Socket socket = new Socket(closestSuccessor.getIpAddr(), closestSuccessor.getPort());
-
-                    // Open reader/writer to chord node
-                    PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
-                    BufferedReader socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                    // Send query to chord
-                    socketWriter.println(Chord.PLACE_ITEM + ":" + key.toString() + ":" +  tempItemTable.get(key));
-                    System.out.println("Sent: " + Chord.PLACE_ITEM + ":" + key.toString() + ":" +  tempItemTable.get(key));
-
-                    // Read response from chord
-                    String serverResponse = socketReader.readLine();
-                    System.out.println("Response from node " + closestSuccessor.getIpAddr() + ", port " + closestSuccessor.getPort() + ", position " + " (" + closestSuccessor.getId() + "):");
-
-                    response = serverResponse;
-
-                    // Close connections
-                    socketWriter.close();
-                    socketReader.close();
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-
                 node.release();
             }
         }
