@@ -19,8 +19,8 @@ public class Client
 {
     public static void main(String[] args){
         Node node;
-        String ip = "127.0.0.1";
-        /*String ip = null;
+       // String ip = "127.0.0.1";
+        String ip = null;
         try {
             Enumeration e = NetworkInterface.getNetworkInterfaces();
             while(e.hasMoreElements())
@@ -39,7 +39,7 @@ public class Client
             //ip = InetAddress.getLocalHost().getHostAddress();
         } catch (SocketException e) {
             e.printStackTrace();
-        }*/
+        }
         int port = 8000;
 
 
