@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="p2pchord:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/p2pchord_jar</output-path>
+    <root id="archive" name="p2pchord.jar">
+      <element id="module-output" name="p2pchord" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/directory/studio/org.apache.commons.codec/1.8/org.apache.commons.codec-1.8.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-codec/commons-codec/1.8/commons-codec-1.8.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
