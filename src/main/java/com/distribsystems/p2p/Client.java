@@ -140,7 +140,7 @@ public class Client
             Map<BigInteger, String> items = new HashMap<>();
             items.putAll(node.getItemTable());
             if(!items.isEmpty()){
-                System.out.println("Items on this node:");
+                System.out.println("Items on this Node("+node.getId()+"):");
             }
             for(BigInteger key: items.keySet()){
                 System.out.println("Item: " + key.toString() + " --> '" + items.get(key) + "'");

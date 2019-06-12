@@ -242,7 +242,7 @@ class ClientHandler extends Thread
         String response = Chord.NOT_FOUND;
 
         // Wrap the queryid if it is as big as the ring
-        if (queryId.compareTo(BigInteger.valueOf(2L).pow(Chord.FINGER_TABLE_SIZE)) >= 0) {
+        if (queryId.compareTo(BigInteger.valueOf(2L).pow(Chord.FINGER_TABLE_SIZE)) >= 0) {              //TODO:togliere
             queryId = queryId.subtract(new BigInteger(String.valueOf(Chord.FINGER_TABLE_SIZE)));
         }
 
@@ -251,7 +251,9 @@ class ClientHandler extends Thread
             response = Chord.FINGER_FOUND + ":" +  this.node.getIpAddr() + ":" + this.node.getPort();
         } else if(this.doesIdReferToNextNode(queryId)) {
             response = Chord.FINGER_FOUND + ":" +  this.node.getFirstSuccessor().getIpAddr() + ":" + this.node.getFirstSuccessor().getPort();
-        } else { // We don't have the query so we must search our fingers for it
+        } else if(this.doesIdReferToNextNextNode(queryId)) {
+            response = Chord.FINGER_FOUND + ":" +  this.node.getSecondSuccessor().getIpAddr() + ":" + this.node.getSecondSuccessor().getPort();
+        }else { // We don't have the query so we must search our fingers for it
             BigInteger baseTwo = BigInteger.valueOf(2L);
             BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
             BigInteger minimumDistance = ringSize;
@@ -351,6 +353,36 @@ class ClientHandler extends Thread
                 // Read response from chord
                 String serverResponse = socketReader.readLine();
                 Chord.cLogPrint("Response from node " + this.node.getFirstSuccessor().getIpAddr() + ", port " + this.node.getFirstSuccessor().getPort() + ", position " + " (" + this.node.getFirstSuccessor().getId() + "):");
+
+                response = serverResponse;
+
+                // Close connections
+                socketWriter.close();
+                socketReader.close();
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            this.node.release();
+        } else if (this.doesIdReferToNextNextNode(queryId)) {
+            this.node.acquire();
+
+            try {
+                // Open socket to chord node
+                Socket socket = new Socket(this.node.getSecondSuccessor().getIpAddr(), this.node.getSecondSuccessor().getPort());
+
+                // Open reader/writer to chord node
+                PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
+                BufferedReader socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                // Send query to chord
+                socketWriter.println(Chord.FIND_ITEM + ":" + key);
+                Chord.cLogPrint("Sent: " + Chord.FIND_ITEM + ":" + key);
+
+                // Read response from chord
+                String serverResponse = socketReader.readLine();
+                Chord.cLogPrint("Response from node " + this.node.getSecondSuccessor().getIpAddr() + ", port " + this.node.getSecondSuccessor().getPort() + ", position " + " (" + this.node.getSecondSuccessor().getId() + "):");
 
                 response = serverResponse;
 
@@ -612,9 +644,9 @@ class ClientHandler extends Thread
     }
 
     /**
-     * @brief   Control whether the id passed as argument refers to the current node's successor
+     * @brief   Control whether the id passed as argument refers to the current node's first successor
      * @param   queryId     Finger/Node's identification
-     * @return  True if it does refer to a successor, False otherwise
+     * @return  True if it does refer to the first successor, False otherwise
      */
     private boolean doesIdReferToNextNode(BigInteger queryId) {
         boolean response = false;
@@ -627,6 +659,29 @@ class ClientHandler extends Thread
             }
         } else { // If we are wrapping
             if ((queryId.compareTo(this.node.getId()) == 1) || (queryId.compareTo(this.node.getFirstSuccessor().getId())<= 0)) {
+                response = true;
+            }
+        }
+
+        return response;
+    }
+
+    /**
+     * @brief   Control whether the id passed as argument refers to the current node's second successor
+     * @param   queryId     Finger/Node's identification
+     * @return  True if it does refer to the second successor, False otherwise
+     */
+    private boolean doesIdReferToNextNextNode(BigInteger queryId) {
+        boolean response = false;
+
+        // If we are working in a nice clockwise direction without wrapping
+        if (this.node.getId().compareTo(this.node.getSecondSuccessor().getId()) == -1) {
+            // If the query id is between our successor and us, the query belongs to our successor
+            if ((queryId.compareTo(this.node.getId()) == 1) && (queryId.compareTo(this.node.getSecondSuccessor().getId())<= 0)) {
+                response = true;
+            }
+        } else { // If we are wrapping
+            if ((queryId.compareTo(this.node.getId()) == 1) || (queryId.compareTo(this.node.getSecondSuccessor().getId())<= 0)) {
                 response = true;
             }
         }

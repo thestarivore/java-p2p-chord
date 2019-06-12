@@ -217,6 +217,8 @@ public class Node
      */
     public void printStatusLogs(){
         Chord.cLogPrint("---------------------------------------");
+        Chord.cLogPrint("Node "+this.getId()+":");
+        Chord.cLogPrint("---------------------------------------");
         // Print Predecessors and Successors
         Chord.cLogPrint("FirstPredecessor--->" + getFirstPredecessor().getIpAddr() + ":" + getFirstPredecessor().getPort() +
                 " (id_= " + getFirstPredecessor().getId().toString() + ")");
