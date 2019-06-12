@@ -284,15 +284,15 @@ public class Node
 
         // If closest successor is null it means that there is no finger that has an ID greater than the key
         // we are looking for, we should forward the request anyway to the finger with the larger id
-                /*if(closestSuccessor == null){
-                    BigInteger maxFingerId = new BigInteger("0");
-                    for (Finger finger : node.getFingerTable().values()) {
-                        if (maxFingerId.compareTo(finger.getId()) < 0){
-                            maxFingerId = finger.getId();
-                            closestSuccessor = finger;
-                        }
-                    }
-                }*/
+        if(closestSuccessor == null){
+            BigInteger maxFingerId = new BigInteger("0");
+            for (Finger finger : this.getFingerTable().values()) {
+                if (maxFingerId.compareTo(finger.getId()) < 0){
+                    maxFingerId = finger.getId();
+                    closestSuccessor = finger;
+                }
+            }
+        }
 
         try {
             // Open socket to chord node

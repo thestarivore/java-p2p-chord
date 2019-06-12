@@ -335,7 +335,6 @@ class ClientHandler extends Thread
             response = Chord.ITEM_FOUND + ":" + this.node.getIpAddr() + ":" + this.node.getPort() +
                     ":" + this.node.getItemTable().get(queryId);
         } else if (this.doesIdReferToNextNode(queryId)) {
-            //response = Chord.ITEM_FOUND + ":" + this.node.getFirstSuccessor().getIpAddr() + ":" + this.node.getFirstSuccessor().getPort();
             this.node.acquire();
 
             try {
@@ -421,7 +420,7 @@ class ClientHandler extends Thread
                 }
             }
 
-            Chord.cLogPrint("queryid: " + queryId + " minimum distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
+            //Chord.cLogPrint("queryid: " + queryId + " minimum distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
 
             try {
                 // Open socket to chord node
