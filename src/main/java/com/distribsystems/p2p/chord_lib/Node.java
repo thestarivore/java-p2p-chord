@@ -345,8 +345,12 @@ public class Node
         BigInteger baseTwo = BigInteger.valueOf(2L);
         BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
         BigInteger minimumDistance = ringSize;
-        Finger closestSuccessor = null;
+        BigInteger smallestId = ringSize;
         String response = Chord.NOT_FOUND;
+        Finger closestSuccessor = null;
+        Finger smallestFinger = null;
+        boolean itemIsGreaterThanAllFingers = true;
+        boolean nodeIsGreaterThanAllFingers = true;
 
         // Look for a node identifier in the finger table that is less than the key we are looking for
         // but is also the closest
@@ -365,6 +369,23 @@ public class Node
                 minimumDistance = distance;
                 closestSuccessor = finger;
             }
+
+            // Find at least one finger's id that is greater than the item key
+            if(itemKey.compareTo(finger.getId()) < 0){
+                itemIsGreaterThanAllFingers = false;
+            }
+
+            // Find at least one finger's id that is greater than the node key
+            if(this.getId().compareTo(finger.getId()) < 0){
+                nodeIsGreaterThanAllFingers = false;
+            }
+
+            // If this finger has an id smaller than the smallest we have already register, then set this as the
+            // smallest id and save the finger as the smallest
+            if(finger.getId().compareTo(smallestId) < 0){
+                smallestId = finger.getId();
+                smallestFinger = finger;
+            }
         }
 
         // If closest successor is null it means that there is no finger that has an ID greater than the key
@@ -377,6 +398,13 @@ public class Node
                     closestSuccessor = finger;
                 }
             }
+        }
+
+        // If the ItemKey is greater than the Node's Id, but the node is already the greatest among fingers, then
+        // it should go to the smallest finger
+        if(nodeIsGreaterThanAllFingers && itemIsGreaterThanAllFingers && itemKey.compareTo(this.getId()) > 0){
+            if(smallestFinger != null)
+                closestSuccessor = smallestFinger;
         }
 
         try {
