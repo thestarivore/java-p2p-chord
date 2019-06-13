@@ -24,8 +24,8 @@
       <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="730">
-              <caret line="407" column="9" lean-forward="true" selection-start-line="407" selection-start-column="9" selection-end-line="407" selection-end-column="9" />
+            <state relative-caret-position="205">
+              <caret line="311" column="49" lean-forward="true" selection-start-line="311" selection-start-column="49" selection-end-line="311" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#18870#18871#0" expanded="true" />
@@ -598,7 +598,14 @@
       <option name="project" value="LOCAL" />
       <updated>1560459610122</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Improved ItemFindByKey on the first find item;">
+      <created>1560460777274</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1560460777274</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -666,7 +673,8 @@
     <MESSAGE value="- Added FingerFind search on also the second successor;&#10;- Added ItemFindByKey search on also the second successor;" />
     <MESSAGE value="Improved ItemFindByKey, now even if no node is good in the finger table it send's the request anyway to the fittest node;" />
     <MESSAGE value="Improved ItemFindByKey with a little fix and introduced a delay on the client GUI;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved ItemFindByKey with a little fix and introduced a delay on the client GUI;" />
+    <MESSAGE value="Improved ItemFindByKey on the first find item;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Improved ItemFindByKey on the first find item;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1218,8 +1226,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="730">
-          <caret line="407" column="9" lean-forward="true" selection-start-line="407" selection-start-column="9" selection-end-line="407" selection-end-column="9" />
+        <state relative-caret-position="205">
+          <caret line="311" column="49" lean-forward="true" selection-start-line="311" selection-start-column="49" selection-end-line="311" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#18870#18871#0" expanded="true" />
