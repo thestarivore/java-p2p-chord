@@ -108,6 +108,9 @@ public class Client
 
                 // Create new node
                 node = new Node(ip, port, existingIpAddress, existingPort);
+                try {
+                    Thread.sleep(Chord.STABILIZATION_DELAY*1000 + 200);
+                } catch (InterruptedException e) { e.printStackTrace(); }
 
                 //Choose Mode
                 Chord.setEnableLogs(false);

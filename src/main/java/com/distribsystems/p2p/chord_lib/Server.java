@@ -420,7 +420,7 @@ class ClientHandler extends Thread
                 }
             }
 
-            //Chord.cLogPrint("queryid: " + queryId + " minimum distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
+            Chord.cLogPrint("queryid: " + queryId + " minimum distance: " + minimumDistance + " on " + closestPredecessor.getIpAddr() + ":" + closestPredecessor.getPort());
 
             try {
                 // Open socket to chord node
