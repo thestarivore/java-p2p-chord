@@ -333,7 +333,6 @@ class ClientHandler extends Thread
      */
     private String forgetFinger(String id) {
         BigInteger queryId = new BigInteger(id);
-        String response = Chord.NOT_FOUND;
         BigInteger baseTwo = BigInteger.valueOf(2L);
         BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
         BigInteger minimumDistance = ringSize;
@@ -351,9 +350,9 @@ class ClientHandler extends Thread
         }
 
         //Test Predecessors
-        if(node.getFirstPredecessor().getId() == queryId){
+        if(node.getFirstPredecessor().getId().compareTo(queryId) == 0){
             //If different use the second predecessor
-            if(node.getSecondPredecessor().getId() != queryId){
+            if(node.getSecondPredecessor().getId().compareTo(queryId) != 0){
                 node.setFirstPredecessor(node.getSecondPredecessor());
             }else{
                 // Search for a finger to be used as predecessor
@@ -375,6 +374,14 @@ class ClientHandler extends Thread
                 }
                 node.setFirstPredecessor(closestPredecessor);
                 node.setSecondPredecessor(closestPredecessor);
+            }
+        }
+
+        //Test Successors
+        if(node.getFirstSuccessor().getId().compareTo(queryId) == 0){
+            node.setFirstSuccessor(node.getFingerTable().get(0));
+            if(node.getSecondSuccessor().getId().compareTo(queryId) == 0) {
+                node.setSecondSuccessor(node.getFingerTable().get(1));
             }
         }
 
