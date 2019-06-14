@@ -326,7 +326,7 @@ class ClientHandler extends Thread
     }
 
     /**
-     * @brief   Forget the node, by deleting it from the the FingerTable
+     * @brief   Forget the node, by deleting it from the the FingerTable and predecessors
      * @param   id  Finger's identification
      * @return  The message to send back of the form FINGER_FOUND:XXX.XXX.XXX.XXX:PPPP if it found a valid candidate,
      *          "NOT_FOUND" otherwise
@@ -347,6 +347,34 @@ class ClientHandler extends Thread
                 finger.setId(node.getId());
                 finger.setIpAddr(node.getIpAddr());
                 finger.setPort(node.getPort());
+            }
+        }
+
+        //Test Predecessors
+        if(node.getFirstSuccessor().getId() == queryId){
+            //If different use the second predecessor
+            if(node.getSecondPredecessor().getId() != queryId){
+                node.setFirstPredecessor(node.getSecondPredecessor());
+            }else{
+                // Search for a finger to be used as predecessor
+                for (Finger finger : this.node.getFingerTable().values()) {
+                    BigInteger distance;
+
+                    // Find clockwise distance from finger to node id
+                    if (node.getId().compareTo(finger.getId()) >= 0) {
+                        distance = node.getId().subtract(finger.getId());
+                    } else {
+                        distance = node.getId().add(ringSize.subtract(finger.getId()));
+                    }
+
+                    // If the distance we have found is smaller than the current minimum, replace the current minimum
+                    if (distance.compareTo(minimumDistance) == -1) {
+                        minimumDistance = distance;
+                        closestPredecessor = finger;
+                    }
+                }
+                node.setFirstPredecessor(closestPredecessor);
+                node.setSecondPredecessor(closestPredecessor);
             }
         }
 
