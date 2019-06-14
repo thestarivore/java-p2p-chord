@@ -351,7 +351,7 @@ class ClientHandler extends Thread
         }
 
         //Test Predecessors
-        if(node.getFirstSuccessor().getId() == queryId){
+        if(node.getFirstPredecessor().getId() == queryId){
             //If different use the second predecessor
             if(node.getSecondPredecessor().getId() != queryId){
                 node.setFirstPredecessor(node.getSecondPredecessor());
@@ -378,7 +378,7 @@ class ClientHandler extends Thread
             }
         }
 
-        Chord.cLogPrint("Node " + queryId.toString() + " has been removed from the finger table..");
+        Chord.cLogPrint("Node " + queryId.toString() + " has been removed from the finger table and predecessors..");
         this.node.release();
 
         return Chord.FINGER_FORGOTTEN;

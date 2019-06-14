@@ -176,10 +176,12 @@ public class Client
             }else if(query.equals("exit")){
                 //Notify all the nodes in the FingerTable that this node is about to self-destruct
                 node.notifyNodeDestruction();
+                System.out.println("Node forgotten..");
 
                 //Empty the ItemTable by moving the items on the other fingers
                 node.emptyItemTable();
-                //System.exit(0);
+                System.out.println("Redistributed the items..");
+                System.exit(0);
             }else{
                 System.out.println("\nWrong input, try again..:\n");
             }
