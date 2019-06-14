@@ -143,6 +143,15 @@ class ClientHandler extends Thread
 
                         break;
                     }
+                    case Chord.FORGET_FINGER: {
+                        String response = this.forgetFinger(content);
+                        Chord.cLogPrint("Sent: " + response);
+
+                        // Respond back to the client
+                        socketWriter.println(response);
+
+                        break;
+                    }
                     case Chord.NEW_PREDECESSOR: {
                         // Parse address and port from the message received
                         String[] contentFragments = content.split(":");
@@ -314,6 +323,37 @@ class ClientHandler extends Thread
         }
 
         return response;
+    }
+
+    /**
+     * @brief   Forget the node, by deleting it from the the FingerTable
+     * @param   id  Finger's identification
+     * @return  The message to send back of the form FINGER_FOUND:XXX.XXX.XXX.XXX:PPPP if it found a valid candidate,
+     *          "NOT_FOUND" otherwise
+     */
+    private String forgetFinger(String id) {
+        BigInteger queryId = new BigInteger(id);
+        String response = Chord.NOT_FOUND;
+        BigInteger baseTwo = BigInteger.valueOf(2L);
+        BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
+        BigInteger minimumDistance = ringSize;
+        Finger closestPredecessor = null;
+
+        this.node.acquire();
+
+        // Search for the node notified in the FingerTable
+        for (Finger finger : this.node.getFingerTable().values()) {
+            if(finger.getId().compareTo(queryId) == 0){
+                finger.setId(node.getId());
+                finger.setIpAddr(node.getIpAddr());
+                finger.setPort(node.getPort());
+            }
+        }
+
+        Chord.cLogPrint("Node " + queryId.toString() + " has been removed from the finger table..");
+        this.node.release();
+
+        return Chord.FINGER_FORGOTTEN;
     }
 
     /**

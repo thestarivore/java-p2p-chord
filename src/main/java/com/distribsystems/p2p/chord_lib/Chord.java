@@ -10,8 +10,10 @@ public class Chord {
     public static boolean           enableLogs = true;
 
     public final static String NEW_PREDECESSOR      = "NEW_PREDECESSOR";
-    public final static String FIND_FINGER          = "FIND_FINGER";            //FIND_NODE
-    public final static String FINGER_FOUND         = "FINGER_FOUND";           //FINGER_FOUND
+    public final static String FIND_FINGER          = "FIND_FINGER";
+    public final static String FINGER_FOUND         = "FINGER_FOUND";
+    public final static String FORGET_FINGER        = "FORGET_FINGER";
+    public final static String FINGER_FORGOTTEN     = "FINGER_FORGOTTEN";
     public static final String REQUEST_PREDECESSOR  = "REQUEST_PREDECESSOR";
     public final static String PING                 = "PING";
     public final static String PONG                 = "PONG";

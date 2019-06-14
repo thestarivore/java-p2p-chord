@@ -140,10 +140,13 @@ public class Client
 
         while (!query.equals("exit")){
             System.out.println("---------------------------------------");
+            System.out.println("Node("+node.getId()+"):");
+
             Map<BigInteger, String> items = new HashMap<>();
             items.putAll(node.getItemTable());
             if(!items.isEmpty()){
-                System.out.println("Items on this Node("+node.getId()+"):");
+                System.out.println("---------------------------------------");
+                System.out.println("Items on this Node:");
             }
             for(BigInteger key: items.keySet()){
                 System.out.println("Item: " + key.toString() + " --> '" + items.get(key) + "'");
@@ -171,7 +174,12 @@ public class Client
                 System.out.println("Response: " + resp);
                 node.release();
             }else if(query.equals("exit")){
-                System.exit(0);
+                //Notify all the nodes in the FingerTable that this node is about to self-destruct
+                node.notifyNodeDestruction();
+
+                //Empty the ItemTable by moving the items on the other fingers
+                node.emptyItemTable();
+                //System.exit(0);
             }else{
                 System.out.println("\nWrong input, try again..:\n");
             }

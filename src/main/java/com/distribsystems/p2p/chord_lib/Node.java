@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 
@@ -438,6 +440,50 @@ public class Node
     }
 
     /**
+     * @brief   Place the Item on the the finger passed as argument
+     * @param   finger  finger where to place the item
+     * @param   itemKey item's key to place
+     * @return  true if the item has been correctly placed, false otherwise
+     */
+    public boolean placeItem(Finger finger, BigInteger itemKey){
+        try {
+            // Open socket to chord node
+            Socket socket = new Socket(finger.getIpAddr(), finger.getPort());
+
+            // Open reader/writer to chord node
+            PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            // Send query to chord
+            socketWriter.println(Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  getItemTable().get(itemKey));
+            Chord.cLogPrint("Sent: " + Chord.PLACE_ITEM + ":" + itemKey.toString() + ":" +  getItemTable().get(itemKey));
+
+            // Read response from chord
+            String serverResponse = socketReader.readLine();
+            Chord.cLogPrint("Response from node " + finger.getIpAddr() + ", port " + finger.getPort() + ", position " + " (" + finger.getId() + "):");
+
+            //Correct Response --> remove the item from this node
+            if(serverResponse != null){
+                if(serverResponse.contains(Chord.ITEM_PLACED)){
+                    return true;
+                }
+            }
+            else
+                return false;
+
+            // Close connections
+            socketWriter.close();
+            socketReader.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * @brief   Create the Identifier(key) by taking the SHA-1 hash function of the item passed as argument
      * @param   item     String of the Item
      */
@@ -447,6 +493,115 @@ public class Node
         BigInteger key = new BigInteger(hex, 16);
         key = key.mod(baseTwo.pow(Chord.FINGER_TABLE_SIZE));
         return key;
+    }
+
+    /**
+     *  @brief  Empty the ItemTable by delegating(sending) each Item from the ItemTable
+     *          to another node in the Finger Table
+     */
+    public void emptyItemTable() {
+        // Iterate all keys in the temp item table, and for each of them send it to another appropriate node
+        Map<BigInteger, String> itemTable = new HashMap<>();
+        itemTable.putAll(this.getItemTable());                 //Iterate Throughout a copy of the ItemTable for concurrency reasons
+        for (BigInteger key : itemTable.keySet()) {
+            BigInteger baseTwo = BigInteger.valueOf(2L);
+            BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
+            BigInteger minimumDistance = ringSize;
+            Finger closestSuccessor = null;
+
+            this.acquire();
+
+            /**
+             * Look for a node identifier in the finger table that is greater(or equal) than the key we are looking for
+             * but is also the closer than the current node
+             */
+            for (Finger finger : this.getFingerTable().values()) {
+                BigInteger distance;
+
+                // Find clockwise distance from finger to query
+                if (key.compareTo(finger.getId()) <= 0) {
+                    distance = finger.getId().subtract(key);
+                } else {
+                    distance = ringSize;
+                }
+
+                // If the distance we have found is smaller than the current minimum, replace the current minimum
+                if (distance.compareTo(minimumDistance) == -1) {
+                    minimumDistance = distance;
+                    closestSuccessor = finger;
+                }
+            }
+
+            // If closest successor is null it means that there is no finger that has an ID greater than the key
+            // we are looking for, we should forward the request anyway to the finger with the larger id
+            if(closestSuccessor == null){
+                BigInteger maxFingerId = new BigInteger("0");
+                for (Finger finger : this.getFingerTable().values()) {
+                    if (maxFingerId.compareTo(finger.getId()) < 0){
+                        maxFingerId = finger.getId();
+                        closestSuccessor = finger;
+                    }
+                }
+            }
+
+            //Send the item and delete it locally
+            if (closestSuccessor != null){
+                // Then send the Item to the correct Finger node
+                if(placeItem(closestSuccessor, key)){
+                    //Correct Response --> remove the item from this node
+                    this.getItemTable().remove(key);
+                }
+            }
+
+            this.release();
+        }
+    }
+
+    /**
+     * @brief   Notify all the nodes in the FingerTable that this node is about to self-destruct
+     * @return  None
+     */
+    public void notifyNodeDestruction(){
+        BigInteger baseTwo = BigInteger.valueOf(2L);
+        BigInteger ringSize = baseTwo.pow(Chord.FINGER_TABLE_SIZE);
+        BigInteger minimumDistance = ringSize;
+        List<BigInteger> notifiedFingers = new ArrayList<>();
+
+        this.acquire();
+
+        // Iterate the FingerTable an notify all the nodes (but just ones)
+        for (Finger finger : getFingerTable().values()) {
+            //Control if the node has already been notified
+            if(notifiedFingers.contains(finger.getId()) == false){
+                try {
+                    // Open socket to chord node
+                    Socket socket = new Socket(finger.getIpAddr(), finger.getPort());
+
+                    // Open reader/writer to chord node
+                    PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
+                    BufferedReader socketReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                    // Send query to chord
+                    socketWriter.println(Chord.FORGET_FINGER + ":" + this.getId());
+                    Chord.cLogPrint("Sent: " + Chord.FORGET_FINGER + ":" + this.getId());
+
+                    // Read response from chord
+                    String serverResponse = socketReader.readLine();
+                    Chord.cLogPrint("Response from node " + finger.getIpAddr() + ", port " + finger.getPort() + ", position " + " (" + finger.getId() + "):");
+                    Chord.cLogPrint(serverResponse);
+
+                    // Close connections
+                    socketWriter.close();
+                    socketReader.close();
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.release();
     }
 
     public Map<Integer, Finger> getFingerTable() {

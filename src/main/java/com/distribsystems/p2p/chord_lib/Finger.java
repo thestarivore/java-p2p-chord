@@ -31,4 +31,16 @@ public class Finger {
     public BigInteger getId() {
         return id;
     }
+
+    public void setIpAddr(String ipAddr) {
+        this.ipAddr = ipAddr;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setId(BigInteger id) {
+        this.id = id;
+    }
 }
