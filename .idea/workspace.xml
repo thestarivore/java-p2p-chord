@@ -8,7 +8,7 @@
   <component name="ChangeListManager">
     <list default="true" id="7c4a4c46-4e1f-4ef4-9969-7cf206e28fc1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -21,11 +21,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Node.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Node.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="156">
-              <caret line="190" column="10" selection-start-line="190" selection-start-column="8" selection-end-line="191" selection-end-column="55" />
+            <state relative-caret-position="175">
+              <caret line="329" column="38" selection-start-line="329" selection-start-column="38" selection-end-line="329" selection-end-column="38" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#26669#26670#0" expanded="true" />
@@ -144,7 +144,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Server.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Server.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Server.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="415">
@@ -159,8 +159,8 @@
       <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/Client.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="905">
-              <caret line="182" column="59" selection-start-line="182" selection-start-column="59" selection-end-line="182" selection-end-column="59" />
+            <state relative-caret-position="421">
+              <caret line="172" column="32" lean-forward="true" selection-start-line="172" selection-start-column="32" selection-end-line="172" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -241,11 +241,11 @@
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Stabilizer.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/ItemGenerationTester.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/ItemQueryTester.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Finger.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Chord.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/Client.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Server.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java" />
       </list>
     </option>
   </component>
@@ -640,7 +640,14 @@
       <option name="project" value="LOCAL" />
       <updated>1560524155695</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="- Corrected the procedure to notify all the other nodes in the finger table about the node's self-destruction. Now the node is also forgotten from the predecessors;">
+      <created>1560525492999</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1560525492999</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -711,7 +718,8 @@
     <MESSAGE value="Improved ItemFindByKey on the first find item;" />
     <MESSAGE value="- Implemented the procedure to notify all the other nodes in the finger table about the node's self-destruction;&#10;- Implemented a ridistribution of the items in the ItemTable of the node that is about to self-destruct;" />
     <MESSAGE value="- Enhanced the procedure to notify all the other nodes in the finger table about the node's self-destruction. Now the node is also forgotten from the predecessors;" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Enhanced the procedure to notify all the other nodes in the finger table about the node's self-destruction. Now the node is also forgotten from the predecessors;" />
+    <MESSAGE value="- Corrected the procedure to notify all the other nodes in the finger table about the node's self-destruction. Now the node is also forgotten from the predecessors;" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Corrected the procedure to notify all the other nodes in the finger table about the node's self-destruction. Now the node is also forgotten from the predecessors;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1256,10 +1264,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Server.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="415">
+          <caret line="382" column="72" selection-start-line="382" selection-start-column="72" selection-end-line="382" selection-end-column="72" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/Client.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="905">
-          <caret line="182" column="59" selection-start-line="182" selection-start-column="59" selection-end-line="182" selection-end-column="59" />
+        <state relative-caret-position="421">
+          <caret line="172" column="32" lean-forward="true" selection-start-line="172" selection-start-column="32" selection-end-line="172" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1268,8 +1286,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Node.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="190" column="10" selection-start-line="190" selection-start-column="8" selection-end-line="191" selection-end-column="55" />
+        <state relative-caret-position="175">
+          <caret line="329" column="38" selection-start-line="329" selection-start-column="38" selection-end-line="329" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#26669#26670#0" expanded="true" />
@@ -1318,16 +1336,6 @@
             <element signature="e#28609#28610#0" expanded="true" />
             <element signature="e#28811#28812#0" expanded="true" />
             <element signature="e#28851#28852#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/distribsystems/p2p/chord_lib/Server.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="382" column="72" selection-start-line="382" selection-start-column="72" selection-end-line="382" selection-end-column="72" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

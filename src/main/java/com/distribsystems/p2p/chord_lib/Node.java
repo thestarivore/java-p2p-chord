@@ -327,6 +327,7 @@ public class Node
         try {
             // Open socket to chord node
             Socket socket = new Socket(closestSuccessor.getIpAddr(), closestSuccessor.getPort());
+            socket.setSoTimeout(2000);
 
             // Open reader/writer to chord node
             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -412,6 +413,7 @@ public class Node
         try {
             // Open socket to chord node
             Socket socket = new Socket(closestSuccessor.getIpAddr(), closestSuccessor.getPort());
+            socket.setSoTimeout(2000);
 
             // Open reader/writer to chord node
             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
