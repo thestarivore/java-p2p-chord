@@ -294,6 +294,7 @@ class ClientHandler extends Thread
             try {
                 // Open socket to chord node
                 Socket socket = new Socket(closestPredecessor.getIpAddr(), closestPredecessor.getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -415,6 +416,7 @@ class ClientHandler extends Thread
             try {
                 // Open socket to chord node
                 Socket socket = new Socket(this.node.getFirstSuccessor().getIpAddr(), this.node.getFirstSuccessor().getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -445,6 +447,7 @@ class ClientHandler extends Thread
             try {
                 // Open socket to chord node
                 Socket socket = new Socket(this.node.getSecondSuccessor().getIpAddr(), this.node.getSecondSuccessor().getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -500,6 +503,7 @@ class ClientHandler extends Thread
             try {
                 // Open socket to chord node
                 Socket socket = new Socket(closestPredecessor.getIpAddr(), closestPredecessor.getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -621,6 +625,7 @@ class ClientHandler extends Thread
             try {
                 // Open socket to chord node
                 Socket socket = new Socket(closestSuccessor.getIpAddr(), closestSuccessor.getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);

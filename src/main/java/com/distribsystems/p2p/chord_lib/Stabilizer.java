@@ -61,6 +61,7 @@ public class Stabilizer extends Thread {
                     {
                         // Open socket to successor
                         socket = new Socket(this.node.getFirstSuccessor().getIpAddr(), this.node.getFirstSuccessor().getPort());
+                        socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                         // Open reader/writer to chord node
                         socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -98,6 +99,7 @@ public class Stabilizer extends Thread {
 
                                 // Inform new successor that we are now their predecessor
                                 socket = new Socket(newSuccessor.getIpAddr(), newSuccessor.getPort());
+                                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                                 // Open writer/reader to new successor node
                                 socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -127,6 +129,7 @@ public class Stabilizer extends Thread {
 
                             // Open socket to successor
                             socket = new Socket(this.node.getFirstSuccessor().getIpAddr(), this.node.getFirstSuccessor().getPort());
+                            socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                             // Open reader/writer to chord node
                             socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -180,6 +183,7 @@ public class Stabilizer extends Thread {
                     {
                         // Open socket to successor
                         socket = new Socket(this.node.getFirstPredecessor().getIpAddr(), this.node.getFirstPredecessor().getPort());
+                        socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                         // Open reader/writer to chord node
                         socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -331,6 +335,7 @@ public class Stabilizer extends Thread {
         try {
             // Open socket to chord node
             Socket socket = new Socket(finger.getIpAddr(), finger.getPort());
+            socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
             // Open reader/writer to chord node
             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -374,6 +379,7 @@ public class Stabilizer extends Thread {
             try {
                 // Open socket to successor
                 Socket socket = new Socket(this.node.getFirstSuccessor().getIpAddr(), this.node.getFirstSuccessor().getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -411,6 +417,7 @@ public class Stabilizer extends Thread {
             try {
                 // Open socket to predecessor
                 Socket socket = new Socket(this.node.getFirstPredecessor().getIpAddr(), this.node.getFirstPredecessor().getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -470,6 +477,7 @@ public class Stabilizer extends Thread {
 
                 // Open socket to successor
                 Socket socket = new Socket(nextFinger.getIpAddr(), nextFinger.getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
                 Chord.cLogPrint("Try to connect to: " + nextFinger.getIpAddr() + ":" + nextFinger.getPort());
 
                 // Open reader/writer to chord node

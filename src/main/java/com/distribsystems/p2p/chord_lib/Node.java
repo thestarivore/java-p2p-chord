@@ -141,6 +141,7 @@ public class Node
             try {
                 BigInteger baseTwo = BigInteger.valueOf(2L);
                 Socket socket = new Socket(this.existingNodeIpAddr, this.existingNodePort);
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open reader/writer to chord node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -197,6 +198,7 @@ public class Node
         if (!this.ipAddr.equals(this.firstSuccessor.getIpAddr()) || (this.port != this.firstSuccessor.getPort())) {
             try {
                 Socket socket = new Socket(this.firstSuccessor.getIpAddr(), this.firstSuccessor.getPort());
+                socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                 // Open writer to successor node
                 PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -327,7 +329,7 @@ public class Node
         try {
             // Open socket to chord node
             Socket socket = new Socket(closestSuccessor.getIpAddr(), closestSuccessor.getPort());
-            socket.setSoTimeout(2000);
+            socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
             // Open reader/writer to chord node
             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -413,7 +415,7 @@ public class Node
         try {
             // Open socket to chord node
             Socket socket = new Socket(closestSuccessor.getIpAddr(), closestSuccessor.getPort());
-            socket.setSoTimeout(2000);
+            socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
             // Open reader/writer to chord node
             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -451,6 +453,7 @@ public class Node
         try {
             // Open socket to chord node
             Socket socket = new Socket(finger.getIpAddr(), finger.getPort());
+            socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
             // Open reader/writer to chord node
             PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);
@@ -578,6 +581,7 @@ public class Node
                 try {
                     // Open socket to chord node
                     Socket socket = new Socket(finger.getIpAddr(), finger.getPort());
+                    socket.setSoTimeout(Chord.SOCKET_TIMEOUT*1000);
 
                     // Open reader/writer to chord node
                     PrintWriter socketWriter = new PrintWriter(socket.getOutputStream(), true);

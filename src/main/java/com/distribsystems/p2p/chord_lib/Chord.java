@@ -7,6 +7,7 @@ public class Chord {
     public final static int         FINGER_TABLE_SIZE = 8;          //Max 160
     public final static int         STABILIZATION_DELAY = 8;        //[seconds]
     public final static int         PING_DELAY = 3;                 //[seconds]
+    public final static int         SOCKET_TIMEOUT = 3;             //[seconds]
     public static boolean           enableLogs = true;
 
     public final static String NEW_PREDECESSOR      = "NEW_PREDECESSOR";
