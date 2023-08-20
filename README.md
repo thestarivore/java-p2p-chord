@@ -1,5 +1,3 @@
-***Distributed Systems - Project***
-
 **P2P with Chord**
 
 Implement the Chord P2P protocol as discussed in its original paper, also including the protocols to stabilize the network when new peers join or leave.
